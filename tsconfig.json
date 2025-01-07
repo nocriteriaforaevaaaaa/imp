@@ -3,6 +3,10 @@
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -22,6 +26,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","src/**/*", ".next/types/**/*.ts", "src/app/Defense/page.js"],
   "exclude": ["node_modules"]
 }
+
