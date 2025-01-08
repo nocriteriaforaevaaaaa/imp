@@ -1,11 +1,8 @@
 "use client"
 import React from 'react';
 import { Navigation2, Heart, Shield, ArrowRight } from 'lucide-react';
-import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
-  const router= useRouter()
-
   const features = [
     {
       title: "Emergency Location",
@@ -18,7 +15,7 @@ export default function Dashboard() {
       title: "AI Therapy",
       icon: <Heart size={32} />,
       description: "Talk to our empathetic AI therapist anytime",
-      route: "/therapist",
+      route: "/therapy",
       color: "bg-red-700"
     },
     {
@@ -31,12 +28,12 @@ export default function Dashboard() {
   ];
 
   const handleNavigation = (route) => {
-   
-    router.push(route);
+    // Navigation logic here
+    console.log(`Navigating to ${route}`);
   };
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen bg-gray-950 text-white">
       <div className="max-w-4xl mx-auto p-6">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-white bg-clip-text text-transparent">
