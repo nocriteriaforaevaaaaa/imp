@@ -33,7 +33,7 @@ export default function Dashboard() {
     },
   ];
 
-  const handleNavigation = (route) => {
+  const handleNavigation = (route: string) => {
     router.push(route);
   };
 

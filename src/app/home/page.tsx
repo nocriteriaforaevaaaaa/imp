@@ -1,6 +1,6 @@
-"use client"
-import React from 'react';
-import { Navigation2, Heart, Shield, ArrowRight } from 'lucide-react';
+"use client";
+import React from "react";
+import { Navigation2, Heart, Shield, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
   const features = [
@@ -9,25 +9,25 @@ export default function Dashboard() {
       icon: <Navigation2 size={32} />,
       description: "Share your real-time location with trusted contacts",
       route: "/location",
-      color: "bg-red-600"
+      color: "bg-red-600",
     },
     {
       title: "AI Therapy",
       icon: <Heart size={32} />,
       description: "Talk to our empathetic AI therapist anytime",
       route: "/therapy",
-      color: "bg-red-700"
+      color: "bg-red-700",
     },
     {
       title: "Self Defense",
       icon: <Shield size={32} />,
       description: "Learn professional defense techniques",
       route: "/defense",
-      color: "bg-red-800"
-    }
+      color: "bg-red-800",
+    },
   ];
 
-  const handleNavigation = (route) => {
+  const handleNavigation = (route: string) => {
     // Navigation logic here
     console.log(`Navigating to ${route}`);
   };
