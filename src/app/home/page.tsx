@@ -2,8 +2,17 @@
 import React from "react";
 import { Navigation2, Heart, Shield, ArrowRight } from "lucide-react";
 
+// Define the type for each feature
+interface Feature {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  route: string;
+  color: string;
+}
+
 export default function Dashboard() {
-  const features = [
+  const features: Feature[] = [
     {
       title: "Emergency Location",
       icon: <Navigation2 size={32} />,
@@ -27,7 +36,7 @@ export default function Dashboard() {
     },
   ];
 
-  const handleNavigation = (route: string) => {
+  const handleNavigation = (route: string): void => {
     // Navigation logic here
     console.log(`Navigating to ${route}`);
   };
