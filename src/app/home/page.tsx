@@ -3,7 +3,6 @@ import React from "react";
 import { Navigation2, Heart, Shield, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
-  
   const features = [
     {
       title: "Emergency Location",
@@ -31,7 +30,6 @@ export default function Dashboard() {
   const handleNavigation = (route: string) => {
     // Navigation logic here
     console.log(`Navigating to ${route}`);
-
   };
 
   return (
