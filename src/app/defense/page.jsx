@@ -281,6 +281,10 @@ function App() {
               height: "auto",
               maxHeight: "70vh",
               objectFit: "contain",
+              transform: "scaleX(-1)",
+            }}
+            videoConstraints={{
+              facingMode: "user",
             }}
           />
           <canvas
