@@ -11,6 +11,7 @@ function App() {
   const sideReferenceCanvasRef = useRef(null);
   const [poseData, setPoseData] = useState(null);
   const [comparisonResult, setComparisonResult] = useState("");
+  const [successCount, setSuccessCount] = useState(0);
 
   // Front view reference pose coordinates
   const frontReferencePose = {
@@ -29,17 +30,6 @@ function App() {
     rightKnee: { x: 190, y: 280 },
     leftAnkle: { x: 150, y: 360 },
     rightAnkle: { x: 200, y: 360 },
-  };
-
-  const boxingTargets = {
-    front: [
-      { x: 320, y: 100, label: "Straight Punch" },
-      { x: 320, y: 140, label: "Body Punch" },
-    ],
-    side: [
-      { x: 320, y: 100, label: "Straight Punch Extension" },
-      { x: 320, y: 140, label: "Body Shot Extension" },
-    ],
   };
 
   const runPosenet = async () => {
@@ -213,35 +203,26 @@ function App() {
       }
     });
   };
+
   const comparePoses = () => {
     setComparisonResult("Calculating...");
 
-    // Add a delay of 5 seconds
     setTimeout(() => {
       if (poseData && frontReferencePose) {
         let matchCount = 0;
-        const threshold = 100; // Larger threshold to allow for more leniency
+        const threshold = 100;
 
-        // Loop through reference pose points and compare them to current pose
         Object.keys(frontReferencePose).forEach((key) => {
           const referencePoint = frontReferencePose[key];
           const currentPoint = poseData.find((point) => point.part === key);
 
           if (currentPoint) {
             if (currentPoint.score > 0.6) {
-              // Only consider points with high confidence
               const distance = Math.sqrt(
                 Math.pow(currentPoint.position.x - referencePoint.x, 2) +
                   Math.pow(currentPoint.position.y - referencePoint.y, 2)
               );
 
-              // Log the distance for debugging
-              console.log(`Comparing ${key}:`);
-              console.log("Reference Point:", referencePoint);
-              console.log("Current Point:", currentPoint);
-              console.log("Distance:", distance);
-
-              // If the distance between points is below the threshold, it's a match
               if (distance < threshold) {
                 matchCount++;
               }
@@ -249,25 +230,46 @@ function App() {
           }
         });
 
-        console.log("Total matches:", matchCount);
-
-        // Compare the match count with a flexible threshold
         const result =
-          matchCount >= 0.5 // Adjust the match threshold if necessary
+          matchCount >= 0.5
             ? "Pose is well matched!"
             : "Pose mismatch. Try again!";
 
-        setComparisonResult(result); // Update result text
-
-        // Use speech synthesis to speak the result
-        const utterance = new SpeechSynthesisUtterance(result);
-        window.speechSynthesis.speak(utterance);
+        if (result === "Pose is well matched!") {
+          setSuccessCount((prev) => prev + 1);
+          if (successCount + 1 === 5) {
+            setComparisonResult("Congratulations!");
+            const congratsMessage = new SpeechSynthesisUtterance(
+              "Congratulations! You did it five times!"
+            );
+            window.speechSynthesis.speak(congratsMessage);
+            setSuccessCount(0);
+          } else {
+            setComparisonResult(
+              `Success! Do it ${5 - successCount - 1} more times.`
+            );
+          }
+        } else {
+          setComparisonResult(result);
+        }
       }
-    }, 5000); // Delay for 5 seconds
+    }, 1000);
   };
 
   React.useEffect(() => {
     runPosenet();
+
+    // Delay the speech and text message by 5 seconds
+    const message = "Do this pose for five times.";
+    const timeout = setTimeout(() => {
+      const speech = new SpeechSynthesisUtterance(message);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(speech);
+
+      setComparisonResult(message);
+    }, 3000);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
