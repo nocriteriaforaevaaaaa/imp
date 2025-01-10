@@ -13,7 +13,7 @@ function App() {
   const [comparisonResult, setComparisonResult] = useState("");
   const [successCount, setSuccessCount] = useState(0);
 
-  // Front view reference pose coordinates
+  
   const frontReferencePose = {
     nose: { x: 190, y: 80 },
     leftEye: { x: 185, y: 70 },
