@@ -11,10 +11,6 @@
 //   )
 // })
 
-// export default function Page() {
-//   return (
-//     <div className="w-full h-[500px]">
-//       <ThreeScene />
-//     </div>
-//   )
-// }
+export default function Page() {
+  return <div className="w-full h-[500px]">{/* <ThreeScene /> */}</div>;
+}
