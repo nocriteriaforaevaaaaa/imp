@@ -2,17 +2,8 @@
 import React from "react";
 import { Navigation2, Heart, Shield, ArrowRight } from "lucide-react";
 
-// Define the type for each feature
-interface Feature {
-  title: string;
-  icon: React.ReactNode;
-  description: string;
-  route: string;
-  color: string;
-}
-
 export default function Dashboard() {
-  const features: Feature[] = [
+  const features = [
     {
       title: "Emergency Location",
       icon: <Navigation2 size={32} />,
@@ -36,18 +27,28 @@ export default function Dashboard() {
     },
   ];
 
-  const handleNavigation = (route: string): void => {
-    // Navigation logic here
+  const handleNavigation = (route: string) => {
     console.log(`Navigating to ${route}`);
+  };
+
+  const handleSignIn = () => {
+    console.log("Signing in...");
+    // Sign-in logic here
   };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <div className="max-w-4xl mx-auto p-6">
-        <header className="text-center mb-12">
+        <header className="flex justify-between items-center mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-white bg-clip-text text-transparent">
             Your Safety Hub
           </h1>
+          <button
+            onClick={handleSignIn}
+            className="bg-red-600 px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition-all duration-300"
+          >
+            Sign In
+          </button>
         </header>
 
         <div className="grid gap-6">

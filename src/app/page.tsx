@@ -8,6 +8,7 @@ import {
   LocateIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -70,7 +71,7 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
-
+        <Button  className=" mt-6 bg-red-600 hover:bg-red-900" onClick={()=> router.push("/sign-up")}> Signin</Button>
         <div className="fixed bottom-6 right-6">
           <button
             onClick={() => {
