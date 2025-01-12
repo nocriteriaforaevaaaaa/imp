@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import * as tf from "@tensorflow/tfjs";
 import * as posenet from "@tensorflow-models/posenet";
 import Webcam from "react-webcam";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 function App() {
   const webcamRef = useRef(null);
@@ -290,7 +292,20 @@ function App() {
 
   return (
     <div className="App">
-      <div className="flex flex-row items-center justify-center min-h-screen bg-gray-900 p-4 gap-4">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex flex-col">
+        {/* Header Section */}
+        <div className="flex items-center justify-between p-6">
+          <div className="text-2xl font-bold text-red-600">
+            Reps: {repetitionCounter} / 5
+          </div>
+          <div className="flex items-center gap-4">
+            <Button className="bg-red-600 hover:bg-red-700">
+              Next Exercise
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
         <div className="relative w-full max-w-2xl">
           <Webcam
             ref={webcamRef}
@@ -316,7 +331,6 @@ function App() {
             }}
           />
         </div>
-
         <div className="flex flex-col gap-4">
           <canvas
             ref={sideReferenceCanvasRef}
@@ -331,7 +345,7 @@ function App() {
           {step == "scan" && (
             <button
               onClick={scanStart}
-              className="mt-4 px-6 py-3 bg-blue-600 text-white font-bold rounded"
+              className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 font-bold rounded"
             >
               Scan me
             </button>
@@ -343,20 +357,20 @@ function App() {
         {step == "holdPos" && (
           <button
             onClick={holdPosHandler}
-            className="mt-4 px-6 py-3 bg-blue-600 text-white font-bold rounded"
+            className="mt-4 px-6 py-3 bg-red-600 hover:bg-red-700 font-bold rounded"
           >
             Start Hold Pos
           </button>
         )}
 
         {countDown != undefined && (
-          <div className="mt-4 px-6 py-3 bg-blue-600 text-white font-bold rounded">
+          <div className="mt-4 px-6 py-3 bg-red-600 hover:bg-red-700 font-bold rounded">
             {countDown}
           </div>
         )}
 
         {countDown != undefined && step == "repetition" && (
-          <div className="mt-4 px-6 py-3 bg-blue-600 text-white font-bold rounded">
+          <div className="mt-4 px-6 py-3  bg-green-600 hover:bg-green-700 font-bold rounded">
             Do it for 30 sec
           </div>
         )}
