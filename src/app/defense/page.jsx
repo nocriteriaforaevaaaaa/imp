@@ -3,14 +3,17 @@ import React, { useEffect, useRef, useState } from "react";
 import * as tf from "@tensorflow/tfjs";
 import * as posenet from "@tensorflow-models/posenet";
 import Webcam from "react-webcam";
+import { Camera, Activity, Clock } from "lucide-react";
+import FBXViewer from "./3dmodel";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const frontReferenceCanvasRef = useRef(null);
   const sideReferenceCanvasRef = useRef(null);
+  const router = useRouter();
 
   const [step, setStep] = useState("scan");
 
@@ -21,6 +24,13 @@ function App() {
   const [holdPosScan, setHoldPosScan] = useState([]);
 
   const [repetitionCounter, setRepetitionCounter] = useState(0);
+  const handleNextExercise = () => {
+    try {
+      router.push("/defense2");
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
+  };
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -231,7 +241,7 @@ function App() {
 
   React.useEffect(() => {
     runPosenet();
-    const message = "Do this pose for five times.";
+    const message = "Are you ready to break some bones?";
     const timeout = setTimeout(() => {
       const speech = new SpeechSynthesisUtterance(message);
       window.speechSynthesis.cancel();
@@ -257,11 +267,11 @@ function App() {
   };
 
   const holdPosHandler = () => {
-    setCountDown(5);
+    setCountDown(10);
 
-    for (let i = 0; i <= 5; i++) {
+    for (let i = 0; i <= 10; i++) {
       setTimeout(() => {
-        if (i == 5) {
+        if (i == 10) {
           setHoldPosScan(poseData);
           setStep("repetition");
           handleRepetition();
@@ -290,90 +300,142 @@ function App() {
     }
   };
 
-  return (
-    <div className="App">
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex flex-col">
-        {/* Header Section */}
-        <div className="flex items-center justify-between p-6">
-          <div className="text-2xl font-bold text-red-600">
-            Reps: {repetitionCounter} / 5
+  const renderRightPanel = () => {
+    return (
+      <div className="relative h-[calc(100%-2rem)] w-full">
+        <div className="absolute inset-0">
+          <FBXViewer modelPath="/model.fbx" width={200} height={400} />
+        </div>
+
+        {(step === "holdPos" || step === "scan") && (
+          <div className="absolute inset-0 bg-red-50 rounded-lg overflow-hidden z-10">
+            <img
+              src={step === "holdPos" ? "/pause.png" : "/scan.png"}
+              alt={
+                step === "holdPos"
+                  ? "Hold position reference"
+                  : "Initial position reference"
+              }
+              className="w-full h-full object-contain"
+            />
           </div>
-          <div className="flex items-center gap-4">
-            <Button className="bg-red-600 hover:bg-red-700">
-              Next Exercise
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-full mx-auto p-4">
+        <div className="flex gap-4 h-[85vh]">
+          <div className="w-[50%]">
+            <div className="relative h-full rounded-xl overflow-hidden bg-gray-900 shadow-xl">
+              <Webcam
+                ref={webcamRef}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transform: "scaleX(-1)",
+                }}
+                videoConstraints={{
+                  facingMode: "user",
+                }}
+              />
+              <canvas
+                ref={canvasRef}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                {step === "scan" && (
+                  <button
+                    onClick={scanStart}
+                    className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <Camera className="w-5 h-5" />
+                    Scan Position
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-[25%] flex flex-col gap-4">
+            <div className="bg-white rounded-xl shadow-lg border-2 border-red-100 h-full p-4">
+              <h2 className="text-red-600 font-semibold mb-3 flex items-center gap-2">
+                <Camera className="w-5 h-5" />
+                Reference Pose
+              </h2>
+              <canvas
+                ref={sideReferenceCanvasRef}
+                className="w-full h-[calc(100%-2rem)] rounded-lg bg-white"
+                style={{
+                  border: "2px solid #fee2e2",
+                }}
+              />
+            </div>
+
+            {(countDown !== undefined || step === "repetition") && (
+              <div className="bg-white rounded-xl shadow-lg border-2 border-red-100 p-4 flex gap-4">
+                {countDown !== undefined && (
+                  <div className="flex-1 bg-red-50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-red-600">
+                      {countDown}
+                    </div>
+                    <div className="text-sm text-red-500">
+                      {step === "repetition" ? "Seconds Left" : "Countdown"}
+                    </div>
+                  </div>
+                )}
+                {step === "repetition" && (
+                  <div className="flex-1 bg-red-50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-red-600">
+                      {repetitionCounter}
+                    </div>
+                    <div className="text-sm text-red-500">Reps</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="w-[25%] bg-white rounded-xl shadow-lg border-2 border-red-100 p-4">
+            <h2 className="text-red-600 font-semibold mb-3">
+              {step === "holdPos"
+                ? "Hold Position"
+                : step === "scan"
+                ? "Initial Position"
+                : "Exercise Model"}
+            </h2>
+            <div className="h-[calc(100%-2rem)]">{renderRightPanel()}</div>
           </div>
         </div>
 
-        <div className="relative w-full max-w-2xl">
-          <Webcam
-            ref={webcamRef}
-            style={{
-              width: "100%",
-              height: "auto",
-              maxHeight: "70vh",
-              objectFit: "contain",
-              transform: "scaleX(-1)",
-            }}
-            videoConstraints={{
-              facingMode: "user",
-            }}
-          />
-          <canvas
-            ref={canvasRef}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </div>
-        <div className="flex flex-col gap-4">
-          <canvas
-            ref={sideReferenceCanvasRef}
-            style={{
-              backgroundColor: "white",
-              border: "2px solid #333",
-              borderRadius: "8px",
-              width: "300px",
-              height: "320px",
-            }}
-          />
-          {step == "scan" && (
+        <div className="mt-4 flex justify-center">
+          {step === "holdPos" && (
             <button
-              onClick={scanStart}
-              className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 font-bold rounded"
+              onClick={holdPosHandler}
+              className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors flex items-center gap-2"
             >
-              Scan me
+              <Clock className="w-5 h-5" />
+              Start Hold Position
             </button>
           )}
         </div>
-      </div>
-
-      <div className="text-center text-white mt-4">
-        {step == "holdPos" && (
-          <button
-            onClick={holdPosHandler}
-            className="mt-4 px-6 py-3 bg-red-600 hover:bg-red-700 font-bold rounded"
-          >
-            Start Hold Pos
-          </button>
-        )}
-
-        {countDown != undefined && (
-          <div className="mt-4 px-6 py-3 bg-red-600 hover:bg-red-700 font-bold rounded">
-            {countDown}
-          </div>
-        )}
-
-        {countDown != undefined && step == "repetition" && (
-          <div className="mt-4 px-6 py-3  bg-green-600 hover:bg-green-700 font-bold rounded">
-            Do it for 30 sec
-          </div>
-        )}
+        <Button
+          onClick={handleNextExercise}
+          className="bg-red-600 hover:bg-red-700"
+        >
+          Next Exercise
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

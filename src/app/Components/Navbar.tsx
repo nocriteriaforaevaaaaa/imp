@@ -12,7 +12,7 @@ const Navbar = () => {
     { href: "/", label: "Home" },
     { href: "/defense", label: "Defense" },
     { href: "/therapist", label: "Therapist" },
-    { href: "/about", label: "About" },
+    { href: "/profile", label: "Profile" },
   ];
   return (
     <nav
